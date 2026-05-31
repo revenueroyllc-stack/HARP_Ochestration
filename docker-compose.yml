@@ -1,0 +1,58 @@
+# H.A.R.P.™ — Multi-container model gateway.
+#
+# Two provider containers (primary + same-class backup) on an INTERNAL Docker
+# network. Neither publishes a port to the host: the only thing that talks to
+# them is the concierge, over mutual TLS, on the internal network. This is the
+# "no public exposure" posture — containers are unreachable from outside.
+#
+# Secrets (real provider API keys) are injected via Docker secrets / env files
+# that are NOT committed. Certs are mounted read-only.
+
+services:
+  harp-container-primary:
+    build:
+      context: .
+      dockerfile: container/Dockerfile
+    container_name: harp-container-primary
+    environment:
+      HARP_CONTAINER_ID: "stub-primary"
+      HARP_CONTAINER_CLASSES: "cloud-reasoning,cloud-coding,frontier-reasoning"
+      HARP_CONTAINER_TIER: "primary"
+      HARP_CONTAINER_FAMILY: "stub"
+      HARP_CONTAINER_PORT: "8443"
+      HARP_CONTAINER_CERT: "/certs/container-primary.crt"
+      HARP_CONTAINER_KEY: "/certs/container-primary.key"
+      HARP_CONTAINER_CA: "/certs/ca.crt"
+      # Real provider secrets would be injected here from an env file/secret:
+      # PROVIDER_API_KEY: "${PROVIDER_API_KEY}"
+    volumes:
+      - ./certs:/certs:ro
+    networks:
+      - harp-internal
+    restart: unless-stopped
+    # No "ports:" mapping → not reachable from the host.
+
+  harp-container-backup:
+    build:
+      context: .
+      dockerfile: container/Dockerfile
+    container_name: harp-container-backup
+    environment:
+      HARP_CONTAINER_ID: "stub-backup"
+      HARP_CONTAINER_CLASSES: "cloud-reasoning,cloud-coding,frontier-reasoning"
+      HARP_CONTAINER_TIER: "backup"
+      HARP_CONTAINER_FAMILY: "stub"
+      HARP_CONTAINER_PORT: "8443"
+      HARP_CONTAINER_CERT: "/certs/container-backup.crt"
+      HARP_CONTAINER_KEY: "/certs/container-backup.key"
+      HARP_CONTAINER_CA: "/certs/ca.crt"
+    volumes:
+      - ./certs:/certs:ro
+    networks:
+      - harp-internal
+    restart: unless-stopped
+
+networks:
+  harp-internal:
+    driver: bridge
+    internal: true   # No egress to the public internet from this network.

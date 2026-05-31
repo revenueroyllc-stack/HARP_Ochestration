@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.log
+
+# mTLS material — NEVER commit private keys or certs
+certs/
+*.key
+*.crt
+*.csr
+*.srl
+*.pem
+
+# Secrets / env
+.env
+.env.*
+*.secret

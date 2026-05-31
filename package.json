@@ -1,0 +1,25 @@
+{
+  "name": "harp",
+  "version": "0.1.0",
+  "description": "H.A.R.P. — Hierarchical Agentic Review & Production System",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "certs": "bash scripts/gen-certs.sh",
+    "containers:up": "docker compose up --build -d",
+    "containers:down": "docker compose down",
+    "container:dev": "tsx container/src/index.ts"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
