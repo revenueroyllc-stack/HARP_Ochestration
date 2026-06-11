@@ -1,0 +1,59 @@
+{
+  "contract_name": "HARP Model Runtime Contract",
+  "version": "0.1.0",
+  "authority": "HARP-Core",
+  "required_fields": {
+    "provider": "fixed provider name",
+    "model": "fixed model name",
+    "revision": "fixed version, tag, digest, or model revision",
+    "max_context_tokens": "fixed integer",
+    "max_concurrency": "fixed integer",
+    "risk_tier": "GREEN | YELLOW | RED",
+    "allowed_sources": [
+      "open-webui",
+      "librechat",
+      "cmux"
+    ],
+    "allowed_tools": [],
+    "fallback_policy": {
+      "enabled": false,
+      "allowed_fallbacks": [],
+      "requires_approval_if_risk_tier": [
+        "YELLOW",
+        "RED"
+      ],
+      "log_required": true
+    },
+    "resource_limits": {
+      "cpu": "fixed",
+      "memory": "fixed",
+      "gpu": "fixed or none",
+      "replicas": 1
+    },
+    "containment": {
+      "api_only": true,
+      "read_only_rootfs": true,
+      "read_only_model_weights": true,
+      "non_root_user": true,
+      "no_new_privileges": true,
+      "cap_drop_all": true,
+      "no_docker_socket": true,
+      "no_privileged_mode": true,
+      "private_network_only": true,
+      "public_ports": false
+    }
+  },
+  "forbidden": [
+    "latest",
+    "auto model",
+    "auto context",
+    "auto fallback",
+    "auto download",
+    "public model port",
+    "docker socket",
+    "privileged mode",
+    "root user",
+    "model-owned tools",
+    "model-owned secrets"
+  ]
+}

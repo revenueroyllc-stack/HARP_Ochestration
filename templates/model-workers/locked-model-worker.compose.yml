@@ -1,0 +1,65 @@
+# H.A.R.P. locked model worker template
+# Template only. Replace image digest and model path before use.
+
+services:
+  locked-model-worker:
+    container_name: locked-model-worker
+    image: vllm/vllm-openai@sha256:PASTE_EXACT_DIGEST_HERE
+    restart: unless-stopped
+
+    # API-only. No public ports.
+    expose:
+      - "8000"
+    ports: []
+
+    networks:
+      - model_internal_net
+
+    # Model weights are readable, not writable.
+    volumes:
+      - ./models/fixed-model:/models/fixed-model:ro
+
+    # Main filesystem cannot be changed.
+    read_only: true
+
+    # Scratch space only.
+    tmpfs:
+      - /tmp:size=2g,noexec,nosuid,nodev
+      - /run:size=256m,noexec,nosuid,nodev
+
+    # Do not run as root.
+    user: "10001:10001"
+
+    # No privilege upgrades.
+    security_opt:
+      - no-new-privileges:true
+
+    # Drop special Linux powers.
+    cap_drop:
+      - ALL
+
+    # Fixed resource box.
+    cpus: "8"
+    mem_limit: 48g
+    pids_limit: 512
+    shm_size: "8gb"
+
+    environment:
+      - HF_HUB_OFFLINE=1
+      - TRANSFORMERS_OFFLINE=1
+      - TOKENIZERS_PARALLELISM=false
+      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+    command:
+      - "--model"
+      - "/models/fixed-model"
+      - "--max-model-len"
+      - "8192"
+      - "--max-num-seqs"
+      - "1"
+      - "--disable-log-requests"
+
+networks:
+  model_internal_net:
+    internal: true
