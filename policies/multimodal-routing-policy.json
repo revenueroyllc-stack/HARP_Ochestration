@@ -1,0 +1,44 @@
+{
+  "checkpoint": "41F",
+  "policy_name": "Maxine Multimodal Routing Policy",
+  "version": "1.0",
+  "routes": {
+    "coding_repo_reasoning_shell_planning": {
+      "primary": "horus-code",
+      "model": "Qwen3.6 35B-A3B 8bit MLX",
+      "endpoint": "http://127.0.0.1:8080/v1/chat/completions"
+    },
+    "audio_vision_image_understanding": {
+      "primary": "gemma-sense",
+      "model": "Gemma 4 12B Instruct 8bit MLX",
+      "endpoint": "http://127.0.0.1:8081/v1"
+    },
+    "image_generation_fast": {
+      "primary": "flux-vision-fast",
+      "model": "flux2-klein-base-4b-mlx-8bit",
+      "endpoint": "http://127.0.0.1:8082/sdapi/v1/txt2img"
+    },
+    "image_generation_quality": {
+      "primary": "flux-vision-quality",
+      "model": "flux2-dev-4-bit",
+      "endpoint": "http://127.0.0.1:8082/sdapi/v1/txt2img"
+    },
+    "image_generation_max": {
+      "primary": "flux-vision-max",
+      "model": "flux2-dev-8-bit",
+      "endpoint": "http://127.0.0.1:8082/sdapi/v1/txt2img"
+    },
+    "voice_generation": {
+      "primary": "maxine-voice",
+      "model": "Qwen3-TTS 12Hz 1.7B Base 8bit",
+      "endpoint": "http://127.0.0.1:8083/v1/audio/speech"
+    }
+  },
+  "governance": {
+    "sandbox_generation": "allowed",
+    "external_release": "requires human approval",
+    "direct_publish_or_send": "not automatic",
+    "audit_required": true,
+    "rule": "Models may explore. H.A.R.P. must approve. Anubis must audit. Humans decide release."
+  }
+}
